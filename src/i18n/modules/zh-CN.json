@@ -39,7 +39,7 @@
   "detail.os": "操作系统",
   "detail.devices": "设备",
   "detail.countries": "国家",
-  "detail.none": "(None)",
+  "detail.none": "直接访问",
 
   "analyticsDetail.ip": "IP 地址",
   "analyticsDetail.userAgent": "User Agent",

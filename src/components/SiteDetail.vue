@@ -102,9 +102,12 @@
           <ScrollArea class="box-border p-2 pt-0 h-full w-full pages-list" v-if="resData.referrer != undefined">
             <p class="page-item" v-for="(i, idx) in resData.referrer" :key="idx">
               <img v-if="i.name" :src="getIconUrl(i.name)" />
-              <a :href="i.name" target="_blank" rel="noopener noreferrer" class="overflow-x-auto whitespace-nowrap cursor-pointer">
-                {{ i.name || t("detail.none") }}
+              <a v-if="i.name" :href="i.name" target="_blank" rel="noopener noreferrer" class="overflow-x-auto whitespace-nowrap cursor-pointer">
+                {{ i.name }}
               </a>
+              <span v-else class="overflow-x-auto whitespace-nowrap text-muted-foreground">{{ t("detail.none") }}</span>
+              </a>
+              <span v-else class="line-clamp-1 text-muted-foreground">{{ t("detail.none") }}</span>
               <span class="line-clamp-1">{{ i.value }}</span>
               <em>{{ i.per }}<i :style="{ width: i.per }"></i></em>
             </p>

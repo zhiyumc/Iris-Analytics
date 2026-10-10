@@ -39,7 +39,7 @@
   "detail.os": "OS",
   "detail.devices": "Devices",
   "detail.countries": "Countries",
-  "detail.none": "(None)",
+  "detail.none": "Direct",
 
   "analyticsDetail.ip": "IP Addresses",
   "analyticsDetail.userAgent": "User Agents",
