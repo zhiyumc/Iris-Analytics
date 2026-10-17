@@ -106,8 +106,6 @@
                 {{ i.name }}
               </a>
               <span v-else class="overflow-x-auto whitespace-nowrap text-muted-foreground">{{ t("detail.none") }}</span>
-              </a>
-              <span v-else class="line-clamp-1 text-muted-foreground">{{ t("detail.none") }}</span>
               <span class="line-clamp-1">{{ i.value }}</span>
               <em>{{ i.per }}<i :style="{ width: i.per }"></i></em>
             </p>
