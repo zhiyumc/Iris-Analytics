@@ -1,11 +1,14 @@
 import { isbot } from "isbot";
 import { UAParser } from "ua-parser-js";
+import { isIpBlacklisted } from "./utils/ipBlacklist.js";
 export async function onRequest({ request, env }) {
   try {
     const { host, path, referrer, website, visitor, visit } = await request.json();
     // 校验统计白名单
     if (env.CLOUDFLARE_WEBSITE_WHITELIST) {
-      const lines = env.CLOUDFLARE_WEBSITE_WHITELIST.split(/[\n,]+/).map((line) => line.trim()).filter(Boolean);
+      const lines = env.CLOUDFLARE_WEBSITE_WHITELIST.split(/[\n,]+/)
+        .map((line) => line.trim())
+        .filter(Boolean);
       const isAllowed = lines.some((line) => {
         const trimmed = line.trim();
         if (!trimmed) return false;
@@ -23,6 +26,10 @@ export async function onRequest({ request, env }) {
     const { browser, os, device } = parsedUserAgent.getResult();
     // IP
     const ip = request.headers.get("cf-connecting-ip") || "";
+    // IP 黑名单 — 命中则丢弃，不写入分析引擎
+    if (isIpBlacklisted(ip, env.CLOUDFLARE_IP_BLACKLIST)) {
+      return Response.json({ success: true, message: "ok" }, { headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type" } });
+    }
     // Area
     const area = request.cf ? String(request.cf.country).trim() || "Unknown" : "Unknown";
     // Referrer

@@ -20,14 +20,12 @@
 
 Iris Analytics is a website analytics tool rebuilt from [HanAnalytics](https://github.com/uxiaohan/HanAnalytics), offering a clearer and more intuitive data overview with an improved user experience.
 
-
 No database required — fully powered by the Cloudflare ecosystem:
 
 - **Pages** — Hosts the frontend and API (Pages Functions)
 - **Workers Analytics Engine** — Time-series database for storing analytics data
 
 ![iris analytics dashboard](docs/dashboard.png)
-
 
 ## Prerequisites
 
@@ -47,12 +45,13 @@ No database required — fully powered by the Cloudflare ecosystem:
 
 ### Environment Variables
 
-| Variable                       | Description                                                                      | Required |
-| ------------------------------ | -------------------------------------------------------------------------------- | -------- |
-| `CLOUDFLARE_ACCOUNT_ID`        | Cloudflare Account ID                                                            | Yes      |
-| `CLOUDFLARE_API_TOKEN`         | Cloudflare API Token (Account Analytics Read permission)                         | Yes      |
-| `CLOUDFLARE_WEBSITE_PWD`       | Dashboard access password (leave empty for no password)                          | No       |
-| `CLOUDFLARE_WEBSITE_WHITELIST` | Analytics whitelist — format: `WebsiteID \| domain`, newline- or comma-separated | No       |
+| Variable                       | Description                                                                                                        | Required |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ | -------- |
+| `CLOUDFLARE_ACCOUNT_ID`        | Cloudflare Account ID                                                                                              | Yes      |
+| `CLOUDFLARE_API_TOKEN`         | Cloudflare API Token (Account Analytics Read permission)                                                           | Yes      |
+| `CLOUDFLARE_WEBSITE_PWD`       | Dashboard access password (leave empty for no password)                                                            | No       |
+| `CLOUDFLARE_WEBSITE_WHITELIST` | Analytics whitelist — format: `WebsiteID \| domain`, newline- or comma-separated                                   | No       |
+| `CLOUDFLARE_IP_BLACKLIST`      | IP blacklist — exact IP, CIDR range, or wildcard (`1.2.3.4`, `1.2.3.0/24`, `1.2.3.*`), comma- or newline-separated | No       |
 
 ### Analytics Engine Binding
 
@@ -98,6 +97,25 @@ iris | iris.exi.software,
 
 The whitelist validates both the unique site ID and domain, ensuring only authorized websites can report data.
 
+## IP Blacklist
+
+Visits from blacklisted IPs are silently ignored by the tracking endpoint — they are never written to the Analytics Engine, the same as bot filtering. Useful for excluding your own IP, datacenter ranges, or abusive scanners.
+
+```shell
+# Recommended: comma-separated (single line)
+CLOUDFLARE_IP_BLACKLIST = 1.2.3.4, 10.0.0.0/8, 192.168.1.*, 2001:db8::/32
+```
+
+Supported rule syntax (comma- or newline-separated, one rule per entry):
+
+- Exact IPv4: `1.2.3.4`
+- IPv4 CIDR range: `1.2.3.0/24`
+- IPv4 wildcard (per octet): `1.2.3.*`, `10.*.*.*`, or `*` to match any IP
+- Exact IPv6: `2001:db8::1`
+- IPv6 CIDR: `2001:db8::/32`
+
+IPv4 and IPv4-mapped IPv6 addresses (e.g. `::ffff:1.2.3.4`) are treated as equivalent. Invalid entries are skipped and logged as warnings.
+
 ## Authentication
 
 Set the `CLOUDFLARE_WEBSITE_PWD` environment variable to require a password for dashboard access. The login session lasts for 7 days and auto-renews on active visits.
@@ -113,4 +131,4 @@ CLOUDFLARE_WEBSITE_PWD = your_password
 
 ## License
 
-The project is licensed under the  [MIT](LICENSE).
+The project is licensed under the [MIT](LICENSE).
